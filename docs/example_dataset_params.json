@@ -1,0 +1,1 @@
+{"generation_info": {"texture_file_path": "example_texture.png", "spline_control_points": [[1, 1], [6, 6]], "spline_sample_number": 20, "sample_grid_width": 7, "sample_grid_height": 7}, "mask_info": {"mask_type": "none", "mask_ratio": 1.0}, "coordinate_precision": 32, "color_precision": 8}
