@@ -514,6 +514,8 @@ class MinimalBTSPDataset:
         ax: plt.Axes = None,
         external_tensors: np.ndarray = None,
         raw_data_alpha: float = 1,
+        control_points: bool = True,
+        selected_points: list[bool] = None,
     ):
         """Plot the dataset."""
         if ax is None:
@@ -523,12 +525,27 @@ class MinimalBTSPDataset:
             external_data = self._binary_tensor_to_float(external_tensors)
             self._scatter_dataframe(external_data, ax, alpha=1)
 
+        if selected_points is not None:
+            # input check
+            if len(selected_points) != self._precise_raw_data.shape[0]:
+                raise ValueError(
+                    (
+                        "The length of the selected points should be equal to the number of points in the dataset."
+                    )
+                )
+            # select dataframe rows
+            selected_data = self._precise_raw_data[selected_points]
+        else:
+            selected_data = self._precise_raw_data
+
         # Plot the sampled points
-        self._scatter_dataframe(self._precise_raw_data, ax, alpha=raw_data_alpha)
+        self._scatter_dataframe(selected_data, ax, alpha=raw_data_alpha)
 
         # Plot the control points
         if self._generation_info is None:
             print("No generation information found. Skipping.")
+        elif control_points is False:
+            pass
         else:
             control_x = [
                 point[0] for point in self._generation_info.spline_control_points
