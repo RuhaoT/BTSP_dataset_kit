@@ -498,14 +498,14 @@ class MinimalBTSPDataset:
 
         return float_data
 
-    def _scatter_dataframe(self, df: pd.DataFrame, ax: plt.Axes, alpha: float = 1.0):
+    def _scatter_dataframe(self, df: pd.DataFrame, ax: plt.Axes, alpha: float = 1.0, scatter_kwargs: dict = None):
         """Plot the dataset."""
         x = df["x"].to_numpy()
         y = df["y"].to_numpy()
         color_r = df["r"].to_numpy() / 255
         color_g = df["g"].to_numpy() / 255
         color_b = df["b"].to_numpy() / 255
-        ax.scatter(x, y, c=np.vstack((color_r, color_g, color_b)).T, alpha=alpha)
+        ax.scatter(x, y, c=np.vstack((color_r, color_g, color_b)).T, alpha=alpha, **scatter_kwargs)
 
     def plot_dataset(
         self,
@@ -516,6 +516,7 @@ class MinimalBTSPDataset:
         raw_data_alpha: float = 1,
         control_points: bool = True,
         selected_points: list[bool] = None,
+        scatter_kwargs: dict = {},
     ):
         """Plot the dataset."""
         if ax is None:
@@ -530,7 +531,7 @@ class MinimalBTSPDataset:
             if len(selected_points) != self._precise_raw_data.shape[0]:
                 raise ValueError(
                     (
-                        "The length of the selected points should be equal to the number of points in the dataset."
+                        f"The length of the selected points({len(selected_points)}) should be equal to the number of points({self._generation_info.spline_sample_number}) in the dataset."
                     )
                 )
             # select dataframe rows
@@ -539,7 +540,7 @@ class MinimalBTSPDataset:
             selected_data = self._precise_raw_data
 
         # Plot the sampled points
-        self._scatter_dataframe(selected_data, ax, alpha=raw_data_alpha)
+        self._scatter_dataframe(selected_data, ax, alpha=raw_data_alpha, scatter_kwargs=scatter_kwargs)
 
         # Plot the control points
         if self._generation_info is None:
